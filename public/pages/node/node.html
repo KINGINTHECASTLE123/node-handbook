@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Node handbook | Node</title>
     <link rel="stylesheet" href="/assets/css/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+    />
   </head>
 
   <body>
@@ -23,8 +27,178 @@
     </header>
 
     <main>
-      <h1>Coming soon</h1>
-      <p>Coming soon</p>
+      <h1>Node.js &amp; npm</h1>
+
+      <section>
+        <h2>What is Node.js</h2>
+        <p>
+          Node.js is an open-source, cross-platform JavaScript runtime that
+          allows JavaScript to run outside the browser, for example, on a
+          server.
+        </p>
+        <h4>How to Run Files:</h4>
+        <ol>
+          <li>Create a JavaScript file, e.g. <code>app.js</code></li>
+          <li>Open the terminal in the file's folder.</li>
+          <li>Run the command:</li>
+        </ol>
+        <pre><code class="language-bash">node app.js</code></pre>
+      </section>
+
+      <section>
+        <h2>npm (Node Package Manager)</h2>
+        <p>
+          npm is the default package manager for Node.js. It is used to install
+          and manage packages and dependencies in a project.
+        </p>
+        <h4>Example:</h4>
+        <pre><code class="language-bash">npm install express</code></pre>
+        <p>
+          npm is included with Node.js, while Yarn and pnpm are alternatives:
+        </p>
+        <ul>
+          <li><b>npm:</b> The default package manager for Node.js.</li>
+          <li>
+            <b>Yarn:</b> An alternative with its own commands and features.
+          </li>
+          <li>
+            <b>pnpm:</b> Saves disk space by sharing packages between projects.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>package.json</h2>
+        <p>
+          The <code>package.json</code> file explains project metadata,
+          dependencies, and scripts. The file can be written manually or
+          generated using <code>npm init</code>.
+        </p>
+        <p>
+          The <code>npm init</code> command creates a
+          <code>package.json</code> file. It asks for project information such
+          as name, version, description and entry point:
+        </p>
+        <pre><code class="language-bash">npm init</code></pre>
+        <p>
+          The <code>node_modules</code> folder contains the packages installed
+          in the project. It should not be pushed to Git because it can be
+          created again by running <code>npm install</code> using the
+          dependencies listed in <code>package.json</code>.
+        </p>
+      </section>
+
+      <section>
+        <h2>npm Scripts</h2>
+        <p>
+          npm scripts are commands you can define in the
+          <code>scripts</code> section in the <code>package.json</code> file.
+          They allow you to run tasks using <code>npm run</code>.
+        </p>
+        <h4>Example:</h4>
+        <pre><code class="language-json">"scripts": {
+  "start": "node app.js"
+}</code></pre>
+        <h4>Run the script:</h4>
+        <pre><code class="language-bash">npm run start</code></pre>
+        <p>This executes <code>node app.js</code></p>
+      </section>
+
+      <section>
+        <h2>Nodemon</h2>
+        <p>
+          Nodemon automatically restarts the Node.js application when changes
+          are detected or saved. It is used only during development, not in
+          production because the server would reset all the time.
+        </p>
+        <h4>Install it as a development dependency:</h4>
+        <pre><code class="language-bash">npm install --save-dev nodemon</code></pre>
+        <p>
+          The <code>ext</code> option specifies which file extensions Nodemon
+          should watch for changes.
+        </p>
+        <h4>Example in my <code>nodemon.json</code> file:</h4>
+        <pre><code class="language-json">{
+  "ext": "js,mjs,cjs,json,css,html"
+}</code></pre>
+        <p>
+          This restarts the application when <code>.js</code>,
+          <code>.json</code>, <code>.css</code> and <code>.html</code> files
+          change.
+        </p>
+      </section>
+
+      <section>
+        <h2>CommonJS vs. ES Modules</h2>
+        <p>Node.js supports two module systems:</p>
+        <p><b>CommonJS</b> (how it would look):</p>
+        <pre><code class="language-js">// export
+module.exports = { constructPage };
+
+// import
+const express = require("express");
+const { constructPage } = require("./templatingEngine.js");</code></pre>
+        <p><b>ES Modules</b> (used in this project):</p>
+        <pre><code class="language-js">// export
+export function constructPage() {}
+
+// import
+import express from "express";
+import { constructPage } from "./templatingEngine.js";</code></pre>
+        <p>
+          <b>Advantages of ES Modules:</b>
+        </p>
+
+        <ul>
+          <li>
+            <b>Standard:</b> ES Modules are the official JavaScript standard,
+            while CommonJS is Node.js older module system.
+          </li>
+          <li>
+            <b>Same syntax:</b> <code>import</code> and <code>export</code> work
+            in both browser and Node.js.
+          </li>
+          <li>
+            <b>Static analysis:</b> Tools like VSCode can better detect errors
+            and suggest code.
+          </li>
+          <li>
+            <b>Tree shaking:</b> Build tools can remove unused code to make
+            bundles smaller.
+          </li>
+          <li>
+            <b>Top-level <code>await</code>:</b> Lets you use
+            <code>await</code> without wrapping it in an
+            <code>async</code> function.
+          </li>
+        </ul>
+        <p>
+          To use ES Modules in Node.js, add <code>"type": "module"</code> to
+          <code>package.json</code>.
+        </p>
+      </section>
+
+      <section>
+        <h2>Environment Variables</h2>
+        <p>
+          Environment variables store settings outside your code, such as API
+          keys, passwords, ports etc. You can define them in a
+          <code>.env</code> file:
+        </p>
+        <pre><code class="language-bash">PORT=8080</code></pre>
+        <p>Load the file when running your application:</p>
+        <pre><code class="language-bash">node --env-file=.env app.js</code></pre>
+        <p>
+          Access the variable in Node.js using <code>process.env.PORT</code>.
+        </p>
+
+        <p>
+          Add <code>.env</code> to <code>.gitignore</code> to prevent sensitive
+          information from being pushed to Git. Create a
+          <code>.env.example</code> file to show developers which variables they
+          need to configure.
+        </p>
+      </section>
     </main>
 
     <footer>
@@ -32,5 +206,8 @@
     </footer>
 
     <script src="/assets/js/footer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
   </body>
 </html>
