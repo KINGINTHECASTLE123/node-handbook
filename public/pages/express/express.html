@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Node handbook | Express</title>
     <link rel="stylesheet" href="/assets/css/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+    />
   </head>
 
   <body>
@@ -23,8 +27,216 @@
     </header>
 
     <main>
-      <h1>Coming soon</h1>
-      <p>Coming soon</p>
+      <h1>Express</h1>
+
+      <section>
+        <h2>Creating an Express Server</h2>
+        <p>
+          Express is the most popular Node.js web application framework,
+          designed for building web applications and APIs.
+        </p>
+        <p>
+          To use Express in your Node.js application, you first need to install
+          it:
+        </p>
+        <pre><code class="language-bash">npm install express</code></pre>
+        <h4>To create a server:</h4>
+        <ol>
+          <li>Import Express from the library.</li>
+          <li>Create an application using <code>express()</code></li>
+          <li>Start the server with <code>app.listen()</code></li>
+        </ol>
+        <h4>Example:</h4>
+        <pre><code class="language-js">import express from 'express';
+const app = express();
+
+app.listen(3000, () => {
+  console.log("Server is running on port", 8080);
+});</code></pre>
+      </section>
+
+      <section>
+        <h2>Client-Server Model</h2>
+        <p>
+          The client-server model describes how a client and a server
+          communicate over a network:
+        </p>
+        <ol>
+          <li><b>Client:</b> Sends a request to the server.</li>
+          <li>
+            <b>Server:</b> Receives requests, processes them and sends
+            responses.
+          </li>
+          <li>
+            <b>Request:</b> The message sent from the client to the server.
+          </li>
+          <li>
+            <b>Response:</b> The message sent back from the server to the
+            client.
+          </li>
+        </ol>
+        <h4>Example:</h4>
+        <p>
+          When you visit a website, your browser sends an HTTP request to the
+          server. The server processes the request and returns an HTTP response
+          containing the requested page and data from the server.
+        </p>
+        <img
+          src="/assets/images/client-server-model.png"
+          alt="Client sends a request to the server and responds with HTML, CSS and JS"
+        />
+      </section>
+
+      <section>
+        <h2>Serving HTML Files</h2>
+        <p>
+          Express can serve HTML files using <code>res.sendFile()</code>. The
+          <code>path.resolve()</code> method creates a path to the file, so
+          Express can locate it.
+        </p>
+        <h4>Example:</h4>
+        <pre><code class="language-js">import express from 'express';
+import path from 'path';
+
+const app = express();
+
+app.get('/', (req, res) => {
+  res.sendFile(path.resolve('public/index.html'));
+});
+
+app.listen(8080, () => {
+  console.log("Server is running on port", 8080);
+});</code></pre>
+        <ul>
+          <li><code>app.get()</code> handles GET request to <code>/</code>.</li>
+          <li>
+            <code>res.sendFile()</code> sends the HTML file to the client.
+          </li>
+          <li><code>path.resolve()</code> creates a path to the file</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Static Files with <code>express.static()</code></h2>
+        <p>
+          Express can serve static files such as CSS, JS, images and HTML using
+          the <code>express.static()</code> method.
+        </p>
+        <p>
+          By serving only the <code>public</code> folder, you avoid exposing
+          other project files, such as <code>.env</code> and
+          <code>package.json</code>, through this static file middleware.
+        </p>
+        <h4>Example:</h4>
+        <pre><code class="language-js">import express from 'express';
+import path from 'path';
+
+const app = express();
+
+app.use(express.static(path.resolve('public')));
+
+app.listen(8080, () => {
+  console.log("Server is running on port", 8080);
+});</code></pre>
+        <ul>
+          <li>
+            <code>express.static</code> makes the files in the
+            <code>public</code> folder accessible to clients.
+          </li>
+          <li>
+            <code>path.resolve</code> creates an absolute path to the folder.
+          </li>
+          <li>
+            Clients can request files such as <code>/style.css</code> etc.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Client Files vs. Server Files</h2>
+        <p>
+          <b>Client files</b> are sent to the browser and run on the user's
+          device. They include HTML, CSS and frontend JS.
+        </p>
+        <p>
+          <b>Server files</b> run on the server and handle requests, business
+          logic and access to databases. They should not be sent directly to the
+          client.
+        </p>
+        <h4>Example:</h4>
+        <pre><code class="language-bash">project/
+├── public/          # Client files
+│   ├── index.html
+│   ├── style.css
+│   └── script.js
+├── app.js           # Server file
+├── .env             # Sensitive configuration
+└── package.json</code></pre>
+
+        <ul>
+          <li>
+            <b>Client:</b> Users can access files served from
+            <code>public</code> through their browser.
+          </li>
+          <li>
+            <b>Server:</b> <code>app.js</code> runs on the server and handles
+            requests.
+          </li>
+          <li>
+            <b>Security:</b>
+            We keep sensitive files outside <code>public</code> to avoid
+            exposing them through static file serving.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Client-Side vs. Server-Side Redirection</h2>
+        <p>
+          Redirection sends a user from one URL to another. It can happen on the
+          client or on the server.
+        </p>
+
+        <h3>Client-Side Redirection</h3>
+        <p>
+          The browser handles navigation using HTML or JS. There are three
+          common approaches:
+        </p>
+        <p>
+          <b>1. Anchor tag:</b> Creates a link that takes the user to another
+          URL when clicked.
+        </p>
+        <pre><code class="language-html">&lt;a href="/"&gt;Go to homepage&lt;/a&gt;</code></pre>
+        <p>
+          <b>2. JavaScript:</b> Redirects the browser immediately or after a
+          delay. <code>replace()</code> does not keep the current page as a
+          separate entry in browser history.
+        </p>
+        <pre><code class="language-js">setTimeout(() => {
+  window.location.href = "/";
+  // window.location.replace("/");
+}, 3000);</code></pre>
+        <p>
+          <b>3. Meta tag:</b> Redirects the browser automatically after a
+          specified number of seconds.
+        </p>
+        <pre><code class="language-html">&lt;meta http-equiv="refresh" content="3; url=/"&gt;</code></pre>
+
+        <h3>Server-Side Redirection</h3>
+        <p>
+          The server redirects the browser by sending an HTTP response with a
+          3xx status code. Express uses
+          <code>302 Found</code> by default with <code>res.redirect()</code>.
+        </p>
+        <pre><code class="language-js">app.get('/old-page', (req, res) => {
+  res.redirect('/new-page');
+});</code></pre>
+
+        <p>
+          <b>Key difference:</b> Client-side is handled by the browser, while
+          server-side is initiated by the server through an HTTP response.
+        </p>
+      </section>
     </main>
 
     <footer>
@@ -32,5 +244,8 @@
     </footer>
 
     <script src="/assets/js/footer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
   </body>
 </html>

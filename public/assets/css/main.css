@@ -64,6 +64,7 @@ img {
 }
 
 p code,
+h2 code,
 h4 code,
 li code {
   background: #e4e4e4;
@@ -78,4 +79,35 @@ h1 {
 h2::before {
   content: "• ";
   color: #3c873a;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: justify;
+}
+
+th {
+  background: #333;
+  color: white;
+}
+
+td code {
+  background: #e4e4e4;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+td code {
+  background-color: #f2f2f2;
+  padding: 3px 6px;
+  border-radius: 4px;
 }

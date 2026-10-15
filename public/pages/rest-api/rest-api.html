@@ -3,8 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Node handbook | REST-API</title>
+    <title>Node handbook | REST APIs</title>
     <link rel="stylesheet" href="/assets/css/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+    />
   </head>
 
   <body>
@@ -23,8 +27,362 @@
     </header>
 
     <main>
-      <h1>Coming soon</h1>
-      <p>Coming soon</p>
+      <h1>REST APIs</h1>
+
+      <section>
+        <h2>What is a REST API?</h2>
+        <p>
+          A REST API enables communication between client and server over HTTP.
+          It exchanges data typically in JSON format using standard web
+          protocols.
+        </p>
+        <ol>
+          <li>Uses HTTP methods like GET, POST, PUT, PATCH, and DELETE.</li>
+          <li>Client sends request to server endpoints (URLs).</li>
+          <li>Server returns responses such as JSON, XML, HTML, or images.</li>
+          <li>
+            Maps HTTP methods to CRUD operations (Create, Read, Update, Delete).
+          </li>
+        </ol>
+        <h4>Example:</h4>
+        <pre><code class="language-bash">GET /animals</code></pre>
+        <p>This request asks the server to return a collection of animals.</p>
+      </section>
+
+      <section>
+        <h2>REST Conventions</h2>
+        <p>
+          REST APIs follow conventions that make endpoints predictable and
+          consistent.
+        </p>
+        <h4>Our three REST conventions:</h4>
+        <ol>
+          <li>Use the correct HTTP method for the action.</li>
+          <li>Follow a consistent order of methods.</li>
+          <li>Use plural nouns for endpoints that represent collections.</li>
+        </ol>
+        <h4>Example: Animal API</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>HTTP method</th>
+              <th>Endpoint</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>GET</td>
+              <td><code>/animals</code></td>
+              <td>Get all animals</td>
+            </tr>
+            <tr>
+              <td>GET</td>
+              <td><code>/animals/{id}</code></td>
+              <td>Get one animal</td>
+            </tr>
+            <tr>
+              <td>POST</td>
+              <td><code>/animals</code></td>
+              <td>Create an animal</td>
+            </tr>
+            <tr>
+              <td>PUT</td>
+              <td><code>/animals/{id}</code></td>
+              <td>Replace an animal</td>
+            </tr>
+            <tr>
+              <td>PATCH</td>
+              <td><code>/animals/{id}</code></td>
+              <td>Update part of an animal</td>
+            </tr>
+            <tr>
+              <td>DELETE</td>
+              <td><code>/animals/{id}</code></td>
+              <td>Delete an animal</td>
+            </tr>
+          </tbody>
+        </table>
+        <ul>
+          <li><b>HTTP method:</b> Describes the action being performed.</li>
+          <li>
+            <b>Order:</b> List resources first, then individual resources,
+            followed by create, update and delete operations.
+          </li>
+          <li>
+            <b>Plural nouns:</b> Use <code>/animals</code> instead of
+            <code>/getAnimals</code> or <code>/animal</code>.
+          </li>
+        </ul>
+        <p>These conventions help make APIs easier to understand and use.</p>
+      </section>
+
+      <section>
+        <h2>Richardson Maturity Model</h2>
+        <p>
+          The Richardson Maturity Model describes how an API follows REST
+          principles. It has four levels, from 0 to 3.
+        </p>
+        <ol>
+          <li>
+            <b>Level 0 (The Swamp):</b> One single URL for everything (e.g.,
+            sending all requests via POST to <code>/api</code>).
+          </li>
+          <li>
+            <b>Level 1 (Resources):</b> Uses separate URLs for different
+            resources, such as <code>/animals</code> and
+            <code>/animals/1</code>.
+          </li>
+          <li>
+            <b>Level 2 (HTTP Methods):</b> Uses the correct HTTP methods and
+            status codes, such as GET, POST, PUT and DELETE.
+          </li>
+          <li>
+            <b>Level 3 (HATEOAS):</b> The API response includes smart links
+            guiding the client on what they can do next.
+          </li>
+        </ol>
+        <p>
+          Our three REST conventions follow level 2 because we use resources,
+          appropriate HTTP methods and HTTP status codes.
+        </p>
+      </section>
+
+      <section>
+        <h2>CRUD with Express</h2>
+        <p>
+          CRUD stands for <b>Create</b>, <b>Read</b>, <b>Update</b>,
+          <b>Delete</b>. These are the four basic operations used to manage
+          data.
+        </p>
+        <p>
+          In Express, CRUD operations can be implemented using routes and HTTP
+          methods.
+        </p>
+        <h4>Example: GET an animal by ID</h4>
+        <pre><code class="language-js">app.get('/animals/:id', (req, res) => {
+  const animal = animals.find(
+    (animal) => animal.id === Number(req.params.id)
+  );
+
+  if(!animal) {
+    return res.status(404).send({ errorMessage: 'Animal not found'}); 
+  }
+
+  res.send({ data: animal });
+});</code></pre>
+        <ul>
+          <li><code>req.params.id</code> gets the ID from the URL.</li>
+          <li><code>find()</code> searches for the animal.</li>
+          <li>
+            <code>404 Not Found</code> is returned if the animal does not exist.
+          </li>
+          <li>
+            <code>res.send()</code> sends the animal wrapped in a
+            <code>data</code> object.
+          </li>
+        </ul>
+        <h4>Example: POST a new animal</h4>
+        <p>First, enable JSON request bodies:</p>
+        <pre><code class="language-js">app.use(express.json());</code></pre>
+        <p>Then create a POST route:</p>
+        <pre><code class="language-js">app.post('/animals', (req, res) => {
+  const animal = req.body;
+
+  res.status(201).send({ data: animal });
+});</code></pre>
+        <ol>
+          <li>
+            <code>express.json()</code> allows Express to read JSON data from
+            the request body.
+          </li>
+          <li><code>req.body</code> contains the submitted data.</li>
+          <li>
+            <code>201 Created</code> indicates that a resource was created.
+          </li>
+        </ol>
+        <p>
+          The POST example returns the submitted data but does not save it. A
+          real implementation should store the new animal.
+        </p>
+        <h3>HTTP Status Codes</h3>
+        <p>HTTP status codes describe the result of a request.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Range</th>
+              <th>Meaning</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2xx</td>
+              <td>Success</td>
+              <td><code>200 OK</code></td>
+            </tr>
+            <tr>
+              <td>3xx</td>
+              <td>Redirection</td>
+              <td><code>301 Moved Permanently</code></td>
+            </tr>
+            <tr>
+              <td>4xx</td>
+              <td>Client error</td>
+              <td><code>404 Not Found</code></td>
+            </tr>
+            <tr>
+              <td>5xx</td>
+              <td>Server error</td>
+              <td><code>500 Internal Server Error</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Sending Data to the Server</h2>
+        <h3>1. Path Parameters</h3>
+        <p>Path parameters identify a specific resource in the URL.</p>
+        <h4>Example URL:</h4>
+        <pre><code class="language-bash">GET /animals/1</code></pre>
+        <h4>Express:</h4>
+        <pre><code class="language-js">app.get('/animals/:id', (req, res) => {
+  console.log(req.params.id);
+});</code></pre>
+        <ul>
+          <li>
+            <code>req.params</code> contains the values from the route
+            parameters.
+          </li>
+          <li>Here, <code>req.params.id</code> is <code>"1"</code></li>
+        </ul>
+
+        <h3>2. Query Parameters</h3>
+        <p>
+          Query parameters provide additional information through the URL, such
+          as filters or sorting options.
+        </p>
+        <h4>Example URL:</h4>
+        <pre><code class="language-bash">GET /animals?sort=name</code></pre>
+        <h4>Express:</h4>
+        <pre><code class="language-js">app.get('/animals', (req, res) => {
+  console.log(req.query.sort);
+});</code></pre>
+        <ul>
+          <li><code>req.query</code> contains the query parameters.</li>
+          <li>Here, <code>req.query.sort</code> is <code>"name"</code>.</li>
+        </ul>
+
+        <h3>3. Request Body</h3>
+        <p>
+          The request body sends data to the server, commonly when creating or
+          updating resources with POST or PATCH.
+        </p>
+        <h4>Example JSON body:</h4>
+        <pre><code class="language-json">{
+  "name": "Frida",
+  "species": "Dachshund"
+}</code></pre>
+        <h4>Example:</h4>
+        <pre><code class="language-js">app.use(express.json());
+
+app.post('/animals', (req, res) => {
+  console.log(req.body.name);
+});</code></pre>
+        <ul>
+          <li><code>req.body</code> contains the submitted data.</li>
+          <li>
+            <code>express.json()</code> is required to parse incoming JSON
+            request bodies.
+          </li>
+        </ul>
+        <p>
+          <b>Key difference:</b> <code>req.params</code> gets data from the
+          path, <code>req.query</code> gets data from the query string, and
+          <code>req.body</code> gets data from the request body.
+        </p>
+      </section>
+
+      <section>
+        <h2>Anatomy of a URL</h2>
+        <p>
+          A URL contains several parts that help identify a resource and how to
+          access it.
+        </p>
+        <h4>Example URL:</h4>
+        <pre><code>https://www.example.com:8080/animals/1?sort=name#top</code></pre>
+        <table>
+          <thead>
+            <tr>
+              <th>Part</th>
+              <th>Value</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Protocol</td>
+              <td><code>https://</code></td>
+              <td>Defines the communication protocol</td>
+            </tr>
+            <tr>
+              <td>Subdomain</td>
+              <td><code>www</code></td>
+              <td>Identifies a subdomain</td>
+            </tr>
+            <tr>
+              <td>Domain name</td>
+              <td><code>example.com</code></td>
+              <td>Identifies the domain</td>
+            </tr>
+            <tr>
+              <td>Top-level domain (TLD)</td>
+              <td><code>.com</code></td>
+              <td>The final part of the domain</td>
+            </tr>
+            <tr>
+              <td>Port</td>
+              <td><code>8080</code></td>
+              <td>Identifies the server port</td>
+            </tr>
+            <tr>
+              <td>Path</td>
+              <td><code>/animals/1</code></td>
+              <td>Identifies the requested resource</td>
+            </tr>
+            <tr>
+              <td>Query string</td>
+              <td><code>?sort=name</code></td>
+              <td>Provides additional parameters</td>
+            </tr>
+            <tr>
+              <td>Fragment</td>
+              <td><code>#top</code></td>
+              <td>Points to a section within the page</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          <b>Important:</b> The query string can be accessed through
+          <code>req.query</code>
+          in Express. The fragment is handled by the browser and is not sent to
+          the server in the HTTP request.
+        </p>
+      </section>
+
+      <section>
+        <h2>Testing with Postman</h2>
+        <p>
+          Postman is a tool for testing APIs by sending HTTP requests and
+          inspecting responses.
+        </p>
+        <p>
+          You can use it to test GET, POST, PUT, PATCH and DELETE requests,
+          including responses.
+        </p>
+        <p><i>More about Postman is covered on the Tools page</i></p>
+      </section>
     </main>
 
     <footer>
@@ -32,5 +390,8 @@
     </footer>
 
     <script src="/assets/js/footer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
   </body>
 </html>
